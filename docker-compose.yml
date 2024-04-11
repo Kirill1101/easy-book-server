@@ -1,0 +1,10 @@
+services:
+  postgres-users:
+    image: 'postgres:latest'
+    container_name: eb-postgres-users
+    environment:
+      - POSTGRES_DB=users
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
