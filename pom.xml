@@ -7,6 +7,7 @@
     <modules>
         <module>auth-service</module>
         <module>api-gateway</module>
+        <module>discovery-server</module>
     </modules>
     <version>0.0.1</version>
     <name>easy-book-server</name>
@@ -30,14 +31,11 @@
         <jsonwebtoken.version>0.11.5</jsonwebtoken.version>
         <springdoc-openapi-starter-webmvc-ui.version>2.2.0</springdoc-openapi-starter-webmvc-ui.version>
         <postgresql.version>42.6.0</postgresql.version>
+        <liquibase.version>4.24.0</liquibase.version>
     </properties>
 
 
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -69,11 +67,6 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>${jsonwebtoken.version}</version>
             <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>${springdoc-openapi-starter-webmvc-ui.version}</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -109,7 +102,21 @@
                 <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
                 <version>${spring-boot-eureka-starter.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+                <version>${spring-boot-eureka-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc-openapi-starter-webmvc-ui.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-core</artifactId>
+                <version>${liquibase.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

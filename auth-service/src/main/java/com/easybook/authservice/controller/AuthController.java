@@ -2,7 +2,6 @@ package com.easybook.authservice.controller;
 
 import com.easybook.authservice.dto.UserCredentialAuthRequest;
 import com.easybook.authservice.dto.UserCredentialRegisterRequest;
-import com.easybook.authservice.entity.Role;
 import com.easybook.authservice.entity.UserCredential;
 import com.easybook.authservice.mapper.UserCredentialMapper;
 import com.easybook.authservice.service.AuthService;
@@ -12,8 +11,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
@@ -29,7 +26,6 @@ public class AuthController {
     @ResponseStatus(HttpStatus.CREATED)
     public void createUser(@RequestBody UserCredentialRegisterRequest credential) {
         UserCredential userCredential = userCredentialMapper.userCredentialRegisterRequestToUserCredential(credential);
-        userCredential.setRoles(List.of(Role.USER));
         authService.saveUser(userCredential);
     }
 

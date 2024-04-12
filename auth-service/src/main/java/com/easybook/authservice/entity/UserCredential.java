@@ -22,12 +22,4 @@ public class UserCredential {
 
   @Column(name = "password")
   private String password;
-
-  @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-  @CollectionTable(
-      name = "user_credential_role",
-      joinColumns = @JoinColumn(name = "user_credential_id"))
-  @Enumerated(EnumType.STRING)
-  @Column(name = "role")
-  private List<Role> roles;
 }
