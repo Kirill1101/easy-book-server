@@ -9,11 +9,11 @@ import java.util.Collection;
 import java.util.List;
 
 public class CustomUserDetails implements UserDetails {
-  private final String name;
+  private final String login;
   private final String password;
 
   public CustomUserDetails(UserCredential userCredential) {
-    this.name = userCredential.getName();
+    this.login = userCredential.getLogin();
     this.password = userCredential.getPassword();
   }
 
@@ -29,7 +29,7 @@ public class CustomUserDetails implements UserDetails {
 
   @Override
   public String getUsername() {
-    return name;
+    return login;
   }
 
   @Override

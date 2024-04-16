@@ -14,10 +14,6 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
 @Configuration
 public class AppConfig {
-  @Bean
-  public RestTemplate template() {
-    return new RestTemplate();
-  }
 
   @Bean
   public RouteLocator routeLocator(RouteLocatorBuilder builder) {

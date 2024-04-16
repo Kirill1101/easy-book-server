@@ -2,10 +2,6 @@ package com.easybook.authservice.config;
 
 import com.easybook.authservice.repository.UserCredentialsRepository;
 import com.easybook.authservice.util.CustomUserDetailsService;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.servers.Server;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,8 +15,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -68,15 +62,5 @@ public class AuthConfig {
     authenticationProvider.setUserDetailsService(userDetailsService(userCredentialsRepository));
     authenticationProvider.setPasswordEncoder(passwordEncoder());
     return authenticationProvider;
-  }
-
-  @Bean
-  public OpenAPI customOpenAPI(
-      @Value("${openapi.service.title}") String serviceTitle,
-      @Value("${openapi.service.version}") String serviceVersion,
-      @Value("${openapi.service.url}") String url) {
-    return new OpenAPI()
-        .servers(List.of(new Server().url(url)))
-        .info(new Info().title(serviceTitle).version(serviceVersion));
   }
 }

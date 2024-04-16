@@ -8,6 +8,7 @@
         <module>auth-service</module>
         <module>api-gateway</module>
         <module>discovery-server</module>
+      <module>scheduling-service</module>
     </modules>
     <version>0.0.1</version>
     <name>easy-book-server</name>

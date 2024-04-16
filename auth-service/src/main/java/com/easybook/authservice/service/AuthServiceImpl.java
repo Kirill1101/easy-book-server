@@ -25,7 +25,7 @@ public class AuthServiceImpl implements AuthService {
 
   @Override
   public String generateToken(String userName) {
-    return jwtUtil.generateToken(userCredentialsRepository.findByName(userName)
+    return jwtUtil.generateToken(userCredentialsRepository.findByLogin(userName)
         .orElseThrow());
   }
 

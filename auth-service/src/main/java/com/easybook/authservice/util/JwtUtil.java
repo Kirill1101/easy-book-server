@@ -23,7 +23,7 @@ public class JwtUtil {
   public String generateToken(UserCredential userCredential) {
     Map<String, Object> claims = new HashMap<>();
     claims.put("id", userCredential.getId());
-    claims.put("name", userCredential.getName());
+    claims.put("login", userCredential.getLogin());
 
     return Jwts.builder()
             .setClaims(claims)
