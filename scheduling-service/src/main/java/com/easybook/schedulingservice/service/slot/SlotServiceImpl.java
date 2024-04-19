@@ -85,7 +85,7 @@ public class SlotServiceImpl implements SlotService {
     scheduleDateId, appointment.getStartTime(), appointment.getEndTime());
     slots.forEach(slot -> {
       if (slot.getAppointmentId() != null) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Slot is already occupied");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Слот уже занят");
       } else {
         slot.setAppointmentId(appointment.getId());
       }
@@ -94,23 +94,25 @@ public class SlotServiceImpl implements SlotService {
   }
 
   @Override
-  public List<Slot> getAvailableSlotsForSpecifiedDuration(Long scheduleId, Duration duration) {
-    List<Slot> freeSlots = getFreeSlots(scheduleId);
+  public List<Slot> getAvailableSlotsForSpecifiedDuration(Long scheduleDateId, Duration duration) {
+    List<Slot> freeSlots = getFreeSlots(scheduleDateId);
 
     List<Slot> slotsAvailableForAppointment = new ArrayList<>();
     for (int i = 0; i < freeSlots.size(); i++) {
-      Duration sumOfTimeAfterCurrentSlot = Duration.ZERO;
-      for (int j = i + 1; j < freeSlots.size(); j++) {
-        LocalTime startTime = freeSlots.get(j - 1).getStartTime();
-        LocalTime endTime = freeSlots.get(j - 1).getEndTime();
-        sumOfTimeAfterCurrentSlot = sumOfTimeAfterCurrentSlot.plus(
-            Duration.between(startTime, endTime));
-        if (!freeSlots.get(j - 1).getEndTime().equals(freeSlots.get(j).getStartTime())) {
+      Duration sumOfTime = Duration.ZERO;
+      LocalTime endTimeOfLastSlot = freeSlots.get(i).getStartTime();
+      for (int j = i; j < freeSlots.size(); j++) {
+        if (!freeSlots.get(j).getStartTime().equals(endTimeOfLastSlot)) {
           break;
         }
+        LocalTime startTime = freeSlots.get(j).getStartTime();
+        LocalTime endTime = freeSlots.get(j).getEndTime();
+        sumOfTime = sumOfTime.plus(
+            Duration.between(startTime, endTime));
+        endTimeOfLastSlot = freeSlots.get(j).getEndTime();
       }
 
-      if (sumOfTimeAfterCurrentSlot.compareTo(duration) <= 0) {
+      if (sumOfTime.compareTo(duration) >= 0) {
         slotsAvailableForAppointment.add(freeSlots.get(i));
       }
     }

@@ -25,7 +25,6 @@ public class Appointment {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(updatable=false)
   private String userLogin;
 
   @Temporal(TemporalType.DATE)

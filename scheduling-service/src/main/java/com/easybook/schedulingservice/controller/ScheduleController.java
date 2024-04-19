@@ -3,6 +3,7 @@ package com.easybook.schedulingservice.controller;
 import com.easybook.schedulingservice.dto.createdto.AppointmentCreateDto;
 import com.easybook.schedulingservice.dto.createdto.ScheduleCreateDto;
 import com.easybook.schedulingservice.dto.regulardto.AppointmentDto;
+import com.easybook.schedulingservice.dto.regulardto.ScheduleDateDto;
 import com.easybook.schedulingservice.dto.regulardto.ScheduleDto;
 import com.easybook.schedulingservice.dto.regulardto.ServiceDto;
 import com.easybook.schedulingservice.entity.Appointment;
@@ -149,7 +150,7 @@ public class ScheduleController {
   }
 
   @GetMapping("/{scheduleId}/slots")
-  public List<ScheduleDate> getAllSlotsByScheduleId(
+  public List<ScheduleDateDto> getAllSlotsByScheduleId(
       @PathVariable Long scheduleId,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     jwtUtil.validateTokenAndExtractData(token);
@@ -159,11 +160,14 @@ public class ScheduleController {
           SCHEDULE_NOT_FOUND_MESSAGE);
     }
 
-    return scheduleDateService.getAllScheduleDatesByScheduleId(scheduleId);
+    return scheduleDateService.getAllScheduleDatesByScheduleId(scheduleId)
+        .stream()
+        .map(schedulingMapper::scheduleDateToScheduleDateDto)
+        .toList();
   }
 
   @GetMapping("/{scheduleId}/free-slots")
-  public List<ScheduleDate> getFreeSlotsByScheduleId(
+  public List<ScheduleDateDto> getFreeSlotsByScheduleId(
       @PathVariable Long scheduleId,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     jwtUtil.validateTokenAndExtractData(token);
@@ -177,13 +181,15 @@ public class ScheduleController {
         scheduleId);
     scheduleDates.forEach(scheduleDate ->
         scheduleDate.setSlots(slotService.getFreeSlots(scheduleDate.getId())));
-    return scheduleDates;
+    return scheduleDates.stream()
+        .map(schedulingMapper::scheduleDateToScheduleDateDto)
+        .toList();
   }
 
   @GetMapping("/{scheduleId}/available-slots")
-  public List<ScheduleDate> getFreeSlotsByScheduleId(
+  public List<ScheduleDateDto> getAvailableSlotsByScheduleId(
       @PathVariable Long scheduleId,
-      @RequestParam Integer durationInSeconds,
+      @RequestParam(value = "durationInSeconds") Long durationInSeconds,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     jwtUtil.validateTokenAndExtractData(token);
 
@@ -196,10 +202,12 @@ public class ScheduleController {
         scheduleId);
     scheduleDates.forEach(scheduleDate ->
         scheduleDate.setSlots(
-            slotService.getAvailableSlotsForSpecifiedDuration(scheduleId,
+            slotService.getAvailableSlotsForSpecifiedDuration(scheduleDate.getId(),
                 Duration.ofSeconds(durationInSeconds))
         )
     );
-    return scheduleDates;
+    return scheduleDates.stream()
+        .map(schedulingMapper::scheduleDateToScheduleDateDto)
+        .toList();
   }
 }

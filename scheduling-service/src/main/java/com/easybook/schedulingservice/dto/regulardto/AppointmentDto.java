@@ -11,6 +11,8 @@ public class AppointmentDto {
   @NotNull
   private Long id;
 
+  private String userLogin;
+
   @Schema(type = "String", pattern = "12:00:00")
   private LocalTime startTime;
 

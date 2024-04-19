@@ -43,30 +43,22 @@ public class ScheduleServiceImpl implements ScheduleService {
   @Transactional
   public Schedule updateSchedule(Schedule schedule) {
     Schedule scheduleFromBase = getScheduleById(schedule.getId()).orElseThrow();
-    if (schedule.getTitle() != null) {
-      scheduleFromBase.setTitle(schedule.getTitle());
-    }
-    if (schedule.getDurationOfOneSlot() != null) {
-      scheduleFromBase.setDurationOfOneSlot(schedule.getDurationOfOneSlot());
-    }
+
     if (schedule.getServices() != null) {
-      schedule.getServices().forEach(service -> {
-        service = serviceService.updateService(service);
-      });
+      schedule.getServices().forEach(service -> service.setSchedule(schedule));
       scheduleFromBase.setServices(schedule.getServices());
     }
+
     if (schedule.getAvailableDates() != null) {
       schedule.getAvailableDates().forEach(date -> {
-        scheduleDateService.updateScheduleDate(date);
         date.setSchedule(schedule);
+        date.getSlots().forEach(slot -> slot.setScheduleDate(date));
       });
       scheduleFromBase.setAvailableDates(schedule.getAvailableDates());
     }
+
     if (schedule.getAppointments() != null) {
-      schedule.getAppointments().forEach(appointment -> {
-        appointmentService.updateAppointment(appointment);
-        appointment.setSchedule(schedule);
-      });
+      schedule.getAppointments().forEach(appointment -> appointment.setSchedule(schedule));
       scheduleFromBase.setAppointments(schedule.getAppointments());
     }
 

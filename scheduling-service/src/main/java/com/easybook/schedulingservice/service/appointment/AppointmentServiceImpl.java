@@ -21,10 +21,11 @@ public class AppointmentServiceImpl implements AppointmentService {
   private final AppointmentRepository appointmentRepository;
 
   public Appointment createAppointment(Appointment appointment) {
+    appointment = appointmentRepository.save(appointment);
     slotService.setSlotsAsOccupiedByAppointment(appointment);
     appointment.setDuration(Duration.between(
         appointment.getStartTime(), appointment.getEndTime()).toSeconds());
-    return appointmentRepository.save(appointment);
+    return appointment;
   }
 
   @Override
