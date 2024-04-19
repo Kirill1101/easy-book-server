@@ -3,8 +3,10 @@ package com.easybook.schedulingservice.controller;
 import com.easybook.schedulingservice.dto.createdto.OrganizationCreateDto;
 import com.easybook.schedulingservice.dto.regulardto.OrganizationDto;
 import com.easybook.schedulingservice.entity.Organization;
+import com.easybook.schedulingservice.entity.Schedule;
 import com.easybook.schedulingservice.mapper.SchedulingMapper;
 import com.easybook.schedulingservice.service.organization.OrganizationService;
+import com.easybook.schedulingservice.service.schedule.ScheduleService;
 import com.easybook.schedulingservice.util.JwtUtil;
 import java.util.Map;
 import java.util.Optional;
@@ -23,6 +25,8 @@ public class OrganizationController {
 
   private final OrganizationService organizationService;
 
+  private final ScheduleService scheduleService;
+
   private final JwtUtil jwtUtil;
   private static final String ORGANIZATION_NOT_FOUND_MESSAGE = "Организации с таким id не существует";
   private static final String NO_ACCESS_RIGHTS_MESSAGE = "Нет прав доступа";
@@ -32,12 +36,13 @@ public class OrganizationController {
       @RequestBody OrganizationCreateDto organizationCreateDto,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     Map<String, Object> userInfo = jwtUtil.validateTokenAndExtractData(token);
-    String userLogin = String.valueOf(userInfo.get("login").toString());
+    Long userId = Long.valueOf(userInfo.get("id").toString());
+    String userLogin = userInfo.get("login").toString();
 
     Organization organization =
         schedulingMapper.organizationCreateDtoToOrganization(organizationCreateDto);
+    organization.setUserCreatorId(userId);
     organization.setUserCreatorLogin(userLogin);
-    organization.getSchedules().forEach(schedule -> schedule.setOrganization(organization));
 
     return schedulingMapper.organizationToOrganizationDto(
         organizationService.createOrganization(organization));
@@ -52,6 +57,7 @@ public class OrganizationController {
     Organization organization = organizationService.getOrganizationById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
             ORGANIZATION_NOT_FOUND_MESSAGE));
+
     return schedulingMapper.organizationToOrganizationDto(organization);
   }
 
@@ -73,10 +79,17 @@ public class OrganizationController {
     } else if (!organizationFromBase.get().getUserCreatorLogin().equals(userLogin)) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN,
           NO_ACCESS_RIGHTS_MESSAGE);
+    } else if (organizationDto.getUserCreatorLogin() !=null &&
+        !organizationFromBase.get().getUserCreatorLogin()
+        .equals(organizationDto.getUserCreatorLogin())) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Пользователь " + organizationDto.getUserCreatorLogin() +
+              " не является создателем организации с id " + organization.getId());
     }
 
-    organization.getSchedules().forEach(schedule -> schedule.setOrganization(organization));
-
+    organization.getSchedules().forEach(schedule -> schedule.setOrganizationId(organization.getId()));
+    organization.setUserCreatorId(organizationFromBase.get().getUserCreatorId());
+    organization.setUserCreatorLogin(organizationFromBase.get().getUserCreatorLogin());
     return schedulingMapper.organizationToOrganizationDto(
         organizationService.updateOrganization(organization));
   }

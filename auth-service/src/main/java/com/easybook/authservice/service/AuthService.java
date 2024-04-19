@@ -5,7 +5,7 @@ import com.easybook.authservice.entity.UserCredential;
 public interface AuthService {
   UserCredential saveUser(UserCredential credential);
 
-  String generateToken(String userName);
+  String generateToken(String login);
 
   void validateToken(String token);
 }

@@ -14,4 +14,6 @@ public interface OrganizationService {
   List<Organization> getOrganizationsByUserId(Long userId);
 
   void deleteOrganizationById(Long id);
+
+  boolean organizationIsExists(Long id);
 }

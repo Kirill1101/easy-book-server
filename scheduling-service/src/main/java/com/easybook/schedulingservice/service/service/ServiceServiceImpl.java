@@ -1,5 +1,6 @@
 package com.easybook.schedulingservice.service.service;
 
+import com.easybook.schedulingservice.entity.ScheduleDate;
 import com.easybook.schedulingservice.entity.Service;
 import com.easybook.schedulingservice.repository.ServiceRepository;
 import java.util.List;
@@ -29,7 +30,15 @@ public class ServiceServiceImpl implements ServiceService{
 
   @Override
   public Service updateService(Service service) {
-    return serviceRepository.save(service);
+    Service serviceFromBase = getServiceById(service.getId()).orElseThrow();
+    if (service.getTitle() != null) {
+      serviceFromBase.setTitle(service.getTitle());
+    }
+    if (service.getDuration() != null) {
+      serviceFromBase.setDuration(service.getDuration());
+    }
+
+    return serviceRepository.save(serviceFromBase);
   }
 
   @Override

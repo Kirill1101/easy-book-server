@@ -1,23 +1,23 @@
 package com.easybook.schedulingservice.repository;
 
-import com.easybook.schedulingservice.entity.Appointment;
-import com.easybook.schedulingservice.entity.Schedule;
 import com.easybook.schedulingservice.entity.Slot;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface SlotRepository extends JpaRepository<Slot, Long> {
-  List<Slot> findSlotsBySchedule_Id(Long scheduleId);
+  List<Slot> findSlotsByScheduleDate_Id(Long scheduleDateId);
 
-  List<Slot> findSlotsBySchedule_IdAndAppointmentIdIsNotNull(Long scheduleId);
+  List<Slot> findSlotsByScheduleDate_IdAndAppointmentIdIsNotNull(Long scheduleDateId);
 
-  List<Slot> findSlotsBySchedule_IdAndAppointmentIdIsNull(Long scheduleId);
+  List<Slot> findSlotsByScheduleDate_IdAndAppointmentIdIsNull(Long scheduleDateId);
 
-  @Query("select Slot from Slot where Slot.startTime >= startTime AND Slot.startTime < endTime")
-  List<Slot> findSlotsThatOccurWithinSpecifiedTimeInterval(LocalTime startTime, LocalTime endTime);
+  @Query(value = "SELECT * FROM slot WHERE slot.schedule_date_id = ?1 AND "
+      + "slot.start_time >= ?2 AND slot.end_time < ?3",
+      nativeQuery = true)
+  List<Slot> findSlotsThatOccurWithinSpecifiedTimeInterval(Long scheduleDateId,
+      LocalTime startTime, LocalTime endTime);
 
   List<Slot> getSlotsByAppointmentId(Long appointmentId);
 }

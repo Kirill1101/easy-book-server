@@ -1,26 +1,31 @@
 package com.easybook.schedulingservice.entity;
 
-import io.hypersistence.utils.hibernate.type.interval.PostgreSQLIntervalType;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import java.time.Duration;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import lombok.Data;
-import org.hibernate.annotations.Type;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
 public class Appointment {
   @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column(updatable=false)
   private String userLogin;
 
   @Temporal(TemporalType.DATE)
@@ -35,8 +40,7 @@ public class Appointment {
   @ManyToMany
   private List<Service> services;
 
-  @Type(PostgreSQLIntervalType.class)
-  private Duration duration;
+  private Long duration;
 
   @ManyToOne
   private Schedule schedule;

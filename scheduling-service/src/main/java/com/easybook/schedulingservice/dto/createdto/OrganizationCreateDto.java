@@ -7,7 +7,5 @@ import lombok.Data;
 @Data
 public class OrganizationCreateDto {
   @NotNull
-  private Long title;
-
-  private List<ScheduleCreateDto> schedules;
+  private String title;
 }

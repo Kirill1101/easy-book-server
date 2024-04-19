@@ -1,21 +1,23 @@
 package com.easybook.schedulingservice.entity;
 
-import io.hypersistence.utils.hibernate.type.interval.PostgreSQLIntervalType;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
-import java.time.Duration;
 import java.util.List;
-import lombok.Data;
-import org.hibernate.annotations.Type;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
 public class Schedule {
   @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @NotNull
@@ -25,21 +27,18 @@ public class Schedule {
   private String userCreatorLogin;
 
   @NotNull
-  private Long title;
+  private String title;
 
-  @Type(PostgreSQLIntervalType.class)
-  private Duration durationOfOneSlot;
+  private Long durationOfOneSlot;
 
-  @OneToMany
-  @JoinColumn(name = "slot_id")
-  private List<Slot> slots;
+  @OneToMany(mappedBy = "schedule", cascade=CascadeType.ALL)
+  private List<ScheduleDate> availableDates;
 
-  @OneToMany
-  private List<Service> service;
+  @OneToMany(mappedBy = "schedule", cascade=CascadeType.ALL)
+  private List<Service> services;
 
-  @OneToMany
+  @OneToMany(mappedBy = "schedule", cascade=CascadeType.ALL)
   private List<Appointment> appointments;
 
-  @ManyToOne
-  private Organization organization;
+  private Long organizationId;
 }

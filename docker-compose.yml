@@ -12,7 +12,7 @@ services:
     image: 'postgres:latest'
     container_name: easybook-postgres-scheduling
     environment:
-      - POSTGRES_DB=users
+      - POSTGRES_DB=scheduling
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
     ports:

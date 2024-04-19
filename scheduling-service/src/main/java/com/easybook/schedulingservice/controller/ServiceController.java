@@ -2,8 +2,11 @@ package com.easybook.schedulingservice.controller;
 
 import com.easybook.schedulingservice.dto.createdto.ServiceCreateDto;
 import com.easybook.schedulingservice.dto.regulardto.ServiceDto;
+import com.easybook.schedulingservice.entity.Organization;
+import com.easybook.schedulingservice.entity.Schedule;
 import com.easybook.schedulingservice.entity.Service;
 import com.easybook.schedulingservice.mapper.SchedulingMapper;
+import com.easybook.schedulingservice.service.schedule.ScheduleService;
 import com.easybook.schedulingservice.service.service.ServiceService;
 import com.easybook.schedulingservice.util.JwtUtil;
 import java.util.Map;
@@ -21,6 +24,8 @@ public class ServiceController {
 
   private final ServiceService serviceService;
 
+  private final ScheduleService scheduleService;
+
   private final SchedulingMapper schedulingMapper;
 
   private final JwtUtil jwtUtil;
@@ -36,10 +41,18 @@ public class ServiceController {
     Map<String, Object> userInfo = jwtUtil.validateTokenAndExtractData(token);
     String userLogin = String.valueOf(userInfo.get("login").toString());
 
+    Optional<Schedule> schedule =
+        scheduleService.getScheduleById(serviceCreateDto.getScheduleId());
+    if (schedule.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+          "Расписания с id = " + serviceCreateDto.getScheduleId() + " не существует");
+    }
+
     Service service = schedulingMapper.serviceCreateDtoToService(serviceCreateDto);
     service.setUserCreatorLogin(userLogin);
-    service = serviceService.createService(service);
+    service.setSchedule(schedule.get());
 
+    service = serviceService.createService(service);
     return schedulingMapper.serviceToServiceDto(service);
   }
 

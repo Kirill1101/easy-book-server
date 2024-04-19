@@ -1,17 +1,29 @@
 package com.easybook.schedulingservice.service.schedule;
 
+import com.easybook.schedulingservice.entity.Appointment;
 import com.easybook.schedulingservice.entity.Schedule;
 import com.easybook.schedulingservice.repository.ScheduleRepository;
+import com.easybook.schedulingservice.service.appointment.AppointmentService;
+import com.easybook.schedulingservice.service.schedule_date.ScheduleDateService;
+import com.easybook.schedulingservice.service.service.ServiceService;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class ScheduleServiceImpl implements ScheduleService {
 
-  ScheduleRepository scheduleRepository;
+  private final ScheduleDateService scheduleDateService;
+
+  private final ServiceService serviceService;
+
+  private final AppointmentService appointmentService;
+
+  private final ScheduleRepository scheduleRepository;
+
   @Override
   public Schedule createSchedule(Schedule schedule) {
     return scheduleRepository.save(schedule);
@@ -28,12 +40,46 @@ public class ScheduleServiceImpl implements ScheduleService {
   }
 
   @Override
+  @Transactional
   public Schedule updateSchedule(Schedule schedule) {
-    return scheduleRepository.save(schedule);
+    Schedule scheduleFromBase = getScheduleById(schedule.getId()).orElseThrow();
+    if (schedule.getTitle() != null) {
+      scheduleFromBase.setTitle(schedule.getTitle());
+    }
+    if (schedule.getDurationOfOneSlot() != null) {
+      scheduleFromBase.setDurationOfOneSlot(schedule.getDurationOfOneSlot());
+    }
+    if (schedule.getServices() != null) {
+      schedule.getServices().forEach(service -> {
+        service = serviceService.updateService(service);
+      });
+      scheduleFromBase.setServices(schedule.getServices());
+    }
+    if (schedule.getAvailableDates() != null) {
+      schedule.getAvailableDates().forEach(date -> {
+        scheduleDateService.updateScheduleDate(date);
+        date.setSchedule(schedule);
+      });
+      scheduleFromBase.setAvailableDates(schedule.getAvailableDates());
+    }
+    if (schedule.getAppointments() != null) {
+      schedule.getAppointments().forEach(appointment -> {
+        appointmentService.updateAppointment(appointment);
+        appointment.setSchedule(schedule);
+      });
+      scheduleFromBase.setAppointments(schedule.getAppointments());
+    }
+
+    return scheduleRepository.save(scheduleFromBase);
   }
 
   @Override
   public void deleteScheduleById(Long id) {
     scheduleRepository.deleteById(id);
+  }
+
+  @Override
+  public boolean scheduleIsExists(Long id) {
+    return scheduleRepository.existsById(id);
   }
 }

@@ -1,16 +1,14 @@
 package com.easybook.schedulingservice.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.util.List;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,19 +16,16 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class Slot {
+public class ScheduleDate {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Temporal(TemporalType.TIME)
-  private LocalTime startTime;
+  private LocalDate date;
 
-  @Temporal(TemporalType.TIME)
-  private LocalTime endTime;
-
-  private Long appointmentId;
+  @OneToMany(mappedBy = "scheduleDate", cascade= CascadeType.ALL)
+  private List<Slot> slots;
 
   @ManyToOne
-  private ScheduleDate scheduleDate;
+  private Schedule schedule;
 }

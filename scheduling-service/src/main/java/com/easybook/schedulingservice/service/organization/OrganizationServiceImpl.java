@@ -46,4 +46,9 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
     organizationRepository.deleteById(id);
   }
+
+  @Override
+  public boolean organizationIsExists(Long id) {
+    return organizationRepository.existsById(id);
+  }
 }

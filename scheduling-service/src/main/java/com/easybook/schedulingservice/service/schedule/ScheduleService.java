@@ -14,4 +14,6 @@ public interface ScheduleService {
   Schedule updateSchedule(Schedule schedule);
 
   void deleteScheduleById(Long id);
+
+  boolean scheduleIsExists(Long id);
 }

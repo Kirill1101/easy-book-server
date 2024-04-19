@@ -14,7 +14,7 @@ public interface SlotService {
 
   Optional<Slot> getSlotById(Long slotId);
 
-  List<Slot> getAllSlotsByScheduleId(Long scheduleId);
+  List<Slot> getAllSlotsByScheduleDateId(Long scheduleDateId);
 
   List<Slot> getOccupiedSlots(Long scheduleId);
 

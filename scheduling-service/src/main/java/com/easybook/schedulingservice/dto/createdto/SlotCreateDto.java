@@ -1,18 +1,23 @@
 package com.easybook.schedulingservice.dto.createdto;
 
-import com.easybook.schedulingservice.dto.regulardto.ServiceDto;
-import com.easybook.schedulingservice.entity.Schedule;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import lombok.Data;
 
 @Data
 public class SlotCreateDto {
   @NotNull
-  private Schedule schedule;
+  private LocalDate date;
 
-  private Long userIdWhoBookedSlot;
+  @NotNull
+  @Schema(type = "String", pattern = "12:00:00")
+  private LocalTime startTime;
 
-  private ServiceDto service;
+  @NotNull
+  @Schema(type = "String", pattern = "12:00:00")
+  private LocalTime endTime;
 
-  private Long scheduleId;
+  private Long scheduleDateId;
 }

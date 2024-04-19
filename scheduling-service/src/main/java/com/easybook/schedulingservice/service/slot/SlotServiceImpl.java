@@ -3,7 +3,10 @@ package com.easybook.schedulingservice.service.slot;
 import com.easybook.schedulingservice.entity.Appointment;
 import com.easybook.schedulingservice.entity.Schedule;
 import com.easybook.schedulingservice.entity.Slot;
+import com.easybook.schedulingservice.repository.ScheduleDateRepository;
 import com.easybook.schedulingservice.repository.SlotRepository;
+import com.easybook.schedulingservice.service.schedule.ScheduleService;
+import com.easybook.schedulingservice.service.schedule_date.ScheduleDateService;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -18,7 +21,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
-public class SlotServiceImpl implements SlotService{
+public class SlotServiceImpl implements SlotService {
+
+  private final ScheduleDateRepository scheduleDateRepository;
+
   private final SlotRepository slotRepository;
 
   @Override
@@ -32,23 +38,37 @@ public class SlotServiceImpl implements SlotService{
   }
 
   @Override
-  public List<Slot> getAllSlotsByScheduleId(Long scheduleId) {
-    return slotRepository.findSlotsBySchedule_Id(scheduleId);
+  public List<Slot> getAllSlotsByScheduleDateId(Long scheduleDateId) {
+    return slotRepository.findSlotsByScheduleDate_Id(scheduleDateId);
   }
 
   @Override
-  public List<Slot> getFreeSlots(Long scheduleId) {
-    return slotRepository.findSlotsBySchedule_IdAndAppointmentIdIsNull(scheduleId);
+  public List<Slot> getFreeSlots(Long scheduleDateId) {
+    return slotRepository.findSlotsByScheduleDate_IdAndAppointmentIdIsNull(scheduleDateId);
   }
 
   @Override
-  public List<Slot> getOccupiedSlots(Long scheduleId) {
-    return slotRepository.findSlotsBySchedule_IdAndAppointmentIdIsNotNull(scheduleId);
+  public List<Slot> getOccupiedSlots(Long scheduleDateId) {
+    return slotRepository.findSlotsByScheduleDate_IdAndAppointmentIdIsNotNull(scheduleDateId);
   }
 
   @Override
   public Slot updateSlot(Slot slot) {
-    return slotRepository.save(slot);
+    Slot slotFromBase = getSlotById(slot.getId()).orElseThrow(() ->
+        new ResponseStatusException(HttpStatus.NOT_FOUND,
+            "Слота с id = " + slot.getId() + " не существует")
+    );
+
+    if (slot.getStartTime() != null) {
+      slotFromBase.setStartTime(slot.getStartTime());
+    }
+    if (slot.getEndTime() != null) {
+      slotFromBase.setEndTime(slot.getEndTime());
+    }
+    if (slot.getAppointmentId() != null) {
+      slotFromBase.setAppointmentId(slot.getAppointmentId());
+    }
+    return slotRepository.save(slotFromBase);
   }
 
   @Override
@@ -58,8 +78,11 @@ public class SlotServiceImpl implements SlotService{
 
   @Override
   public List<Slot> setSlotsAsOccupiedByAppointment(Appointment appointment) {
+    Long scheduleDateId = scheduleDateRepository.findScheduleDateBySchedule_IdAndDate(
+        appointment.getSchedule().getId(), appointment.getDate()).orElseThrow(() ->
+        new ResponseStatusException(HttpStatus.NOT_FOUND, "Такой даты нет в расписании")).getId();
     List<Slot> slots = slotRepository.findSlotsThatOccurWithinSpecifiedTimeInterval(
-        appointment.getStartTime(), appointment.getEndTime());
+    scheduleDateId, appointment.getStartTime(), appointment.getEndTime());
     slots.forEach(slot -> {
       if (slot.getAppointmentId() != null) {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Slot is already occupied");
@@ -80,7 +103,8 @@ public class SlotServiceImpl implements SlotService{
       for (int j = i + 1; j < freeSlots.size(); j++) {
         LocalTime startTime = freeSlots.get(j - 1).getStartTime();
         LocalTime endTime = freeSlots.get(j - 1).getEndTime();
-        sumOfTimeAfterCurrentSlot = sumOfTimeAfterCurrentSlot.plus(Duration.between(startTime, endTime));
+        sumOfTimeAfterCurrentSlot = sumOfTimeAfterCurrentSlot.plus(
+            Duration.between(startTime, endTime));
         if (!freeSlots.get(j - 1).getEndTime().equals(freeSlots.get(j).getStartTime())) {
           break;
         }

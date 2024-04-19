@@ -1,21 +1,25 @@
 package com.easybook.schedulingservice.dto.createdto;
 
-import com.easybook.schedulingservice.entity.Service;
-import java.time.Duration;
-import java.time.Instant;
+import com.easybook.schedulingservice.dto.regulardto.ServiceDto;
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import lombok.Data;
 
 @Data
 public class AppointmentCreateDto {
+  private LocalDate date;
+
+  @Schema(type = "String", pattern = "12:00:00")
   private LocalTime startTime;
 
+  @Schema(type = "String", pattern = "12:00:00")
   private LocalTime endTime;
 
-  private List<Service> services;
+  private List<ServiceDto> services;
 
-  private Duration duration;
+  private Long duration;
 
   private Long scheduleId;
 }

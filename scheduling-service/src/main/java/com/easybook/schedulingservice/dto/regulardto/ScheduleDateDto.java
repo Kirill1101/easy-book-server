@@ -1,17 +1,18 @@
 package com.easybook.schedulingservice.dto.regulardto;
 
 import jakarta.validation.constraints.NotNull;
-import java.time.Instant;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.Data;
 
 @Data
-public class ServiceDto {
+public class ScheduleDateDto {
   @NotNull
   private Long id;
 
-  private String userCreatorLogin;
+  @NotNull
+  private LocalDate date;
 
-  private String title;
-
-  private Long duration;
+  @NotNull
+  private List<SlotDto> slots;
 }

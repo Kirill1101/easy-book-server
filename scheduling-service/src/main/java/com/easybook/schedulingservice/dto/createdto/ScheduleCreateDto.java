@@ -1,5 +1,7 @@
 package com.easybook.schedulingservice.dto.createdto;
 
+import com.easybook.schedulingservice.dto.regulardto.AppointmentDto;
+import com.easybook.schedulingservice.entity.Appointment;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.Data;
@@ -7,9 +9,13 @@ import lombok.Data;
 @Data
 public class ScheduleCreateDto {
   @NotNull
-  private Long title;
+  private String title;
 
-  private List<SlotCreateDto> slots;
+  private Long durationOfOneSlot;
 
-  private List<ServiceCreateDto> service;
+  private List<ScheduleDateCreateDto> availableDates;
+
+  private List<ServiceCreateDto> services;
+
+  private Long organizationsId;
 }

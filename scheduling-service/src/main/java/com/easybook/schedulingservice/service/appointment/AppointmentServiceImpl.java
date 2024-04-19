@@ -23,7 +23,7 @@ public class AppointmentServiceImpl implements AppointmentService {
   public Appointment createAppointment(Appointment appointment) {
     slotService.setSlotsAsOccupiedByAppointment(appointment);
     appointment.setDuration(Duration.between(
-        appointment.getStartTime(), appointment.getEndTime()));
+        appointment.getStartTime(), appointment.getEndTime()).toSeconds());
     return appointmentRepository.save(appointment);
   }
 
@@ -47,14 +47,25 @@ public class AppointmentServiceImpl implements AppointmentService {
     Appointment appointmentFromBase
         = appointmentRepository.findById(appointment.getId()).orElseThrow();
     if (appointmentFromBase.getStartTime() != appointment.getStartTime() ||
-        appointmentFromBase.getEndTime() != appointment.getEndTime()) {
+        appointmentFromBase.getEndTime() != appointment.getEndTime() ||
+        !appointmentFromBase.getDate().equals(appointment.getDate())) {
       slotRepository.getSlotsByAppointmentId(appointment.getId()).forEach(
           slot -> slot.setAppointmentId(null));
-      slotService.setSlotsAsOccupiedByAppointment(appointment);
-      appointment.setDuration(Duration.between(
-          appointment.getStartTime(), appointment.getEndTime()));
+
+      appointmentFromBase.setDate(appointment.getDate());
+      appointmentFromBase.setStartTime(appointment.getStartTime());
+      appointmentFromBase.setEndTime(appointment.getEndTime());
+      appointmentFromBase.setDuration(Duration.between(
+          appointment.getStartTime(), appointment.getEndTime()).toSeconds());
+
+      slotService.setSlotsAsOccupiedByAppointment(appointmentFromBase);
     }
-    return appointmentRepository.save(appointment);
+
+    if (appointment.getServices() != null) {
+      appointmentFromBase.setServices(appointment.getServices());
+    }
+
+    return appointmentRepository.save(appointmentFromBase);
   }
 
   @Override

@@ -6,10 +6,14 @@ import com.easybook.schedulingservice.dto.regulardto.AppointmentDto;
 import com.easybook.schedulingservice.dto.regulardto.ScheduleDto;
 import com.easybook.schedulingservice.dto.regulardto.ServiceDto;
 import com.easybook.schedulingservice.entity.Appointment;
+import com.easybook.schedulingservice.entity.Organization;
 import com.easybook.schedulingservice.entity.Schedule;
+import com.easybook.schedulingservice.entity.ScheduleDate;
 import com.easybook.schedulingservice.entity.Slot;
 import com.easybook.schedulingservice.mapper.SchedulingMapper;
+import com.easybook.schedulingservice.service.organization.OrganizationService;
 import com.easybook.schedulingservice.service.schedule.ScheduleService;
+import com.easybook.schedulingservice.service.schedule_date.ScheduleDateService;
 import com.easybook.schedulingservice.service.service.ServiceService;
 import com.easybook.schedulingservice.service.slot.SlotService;
 import com.easybook.schedulingservice.util.JwtUtil;
@@ -30,7 +34,11 @@ public class ScheduleController {
 
   private final SchedulingMapper schedulingMapper;
 
+  private final OrganizationService organizationService;
+
   private final ScheduleService scheduleService;
+
+  private final ScheduleDateService scheduleDateService;
 
   private final ServiceService serviceService;
 
@@ -47,14 +55,30 @@ public class ScheduleController {
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     Map<String, Object> userInfo = jwtUtil.validateTokenAndExtractData(token);
     Long userId = Long.valueOf(userInfo.get("id").toString());
-    String userLogin = String.valueOf(userInfo.get("login").toString());
+    String userLogin = userInfo.get("login").toString();
+
+    if (!organizationService.organizationIsExists(scheduleCreateDto.getOrganizationsId())) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+          "Организации с id = " + scheduleCreateDto.getOrganizationsId() + " не существует");
+    }
 
     Schedule schedule =
         schedulingMapper.scheduleCreateDtoToSchedule(scheduleCreateDto);
     schedule.setUserCreatorId(userId);
     schedule.setUserCreatorLogin(userLogin);
+    Schedule savedSchedule = scheduleService.createSchedule(schedule);
 
-    schedule = scheduleService.createSchedule(schedule);
+    schedule.getServices().forEach(service -> {
+      service.setUserCreatorLogin(userLogin);
+      service.setSchedule(savedSchedule);
+      serviceService.createService(service);
+    });
+
+    schedule.getAvailableDates().forEach(date -> {
+      date.setSchedule(savedSchedule);
+      scheduleDateService.createScheduleDate(date);
+    });
+
     return schedulingMapper.scheduleToScheduleDto(schedule);
   }
 
@@ -89,7 +113,6 @@ public class ScheduleController {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN,
           NO_ACCESS_RIGHTS_MESSAGE);
     }
-
     schedule = scheduleService.updateSchedule(schedule);
     return schedulingMapper.scheduleToScheduleDto(schedule);
   }
@@ -126,30 +149,57 @@ public class ScheduleController {
   }
 
   @GetMapping("/{scheduleId}/slots")
-  public List<Slot> getAllSlotsByScheduleId(
+  public List<ScheduleDate> getAllSlotsByScheduleId(
       @PathVariable Long scheduleId,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     jwtUtil.validateTokenAndExtractData(token);
 
-    return slotService.getAllSlotsByScheduleId(scheduleId);
+    if (scheduleService.getScheduleById(scheduleId).isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+          SCHEDULE_NOT_FOUND_MESSAGE);
+    }
+
+    return scheduleDateService.getAllScheduleDatesByScheduleId(scheduleId);
   }
 
   @GetMapping("/{scheduleId}/free-slots")
-  public List<Slot> getFreeSlotsByScheduleId(
+  public List<ScheduleDate> getFreeSlotsByScheduleId(
       @PathVariable Long scheduleId,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     jwtUtil.validateTokenAndExtractData(token);
 
-    return slotService.getFreeSlots(scheduleId);
+    if (scheduleService.getScheduleById(scheduleId).isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+          SCHEDULE_NOT_FOUND_MESSAGE);
+    }
+
+    List<ScheduleDate> scheduleDates = scheduleDateService.getAllScheduleDatesByScheduleId(
+        scheduleId);
+    scheduleDates.forEach(scheduleDate ->
+        scheduleDate.setSlots(slotService.getFreeSlots(scheduleDate.getId())));
+    return scheduleDates;
   }
 
   @GetMapping("/{scheduleId}/available-slots")
-  public List<Slot> getFreeSlotsByScheduleId(
+  public List<ScheduleDate> getFreeSlotsByScheduleId(
       @PathVariable Long scheduleId,
-      @RequestParam Duration duration,
+      @RequestParam Integer durationInSeconds,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     jwtUtil.validateTokenAndExtractData(token);
 
-    return slotService.getAvailableSlotsForSpecifiedDuration(scheduleId, duration);
+    if (scheduleService.getScheduleById(scheduleId).isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+          SCHEDULE_NOT_FOUND_MESSAGE);
+    }
+
+    List<ScheduleDate> scheduleDates = scheduleDateService.getAllScheduleDatesByScheduleId(
+        scheduleId);
+    scheduleDates.forEach(scheduleDate ->
+        scheduleDate.setSlots(
+            slotService.getAvailableSlotsForSpecifiedDuration(scheduleId,
+                Duration.ofSeconds(durationInSeconds))
+        )
+    );
+    return scheduleDates;
   }
 }

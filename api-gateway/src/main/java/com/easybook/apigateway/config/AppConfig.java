@@ -33,10 +33,10 @@ public class AppConfig {
                     .uri("lb://auth-service"))
         .route(
             r ->
-                r.path("/profile-service/v3/api-docs")
+                r.path("/scheduling-service/v3/api-docs")
                     .and()
                     .method(HttpMethod.GET)
-                    .uri("lb://profile-service"))
+                    .uri("lb://scheduling-service"))
         .build();
   }
 

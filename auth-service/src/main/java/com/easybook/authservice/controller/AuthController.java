@@ -34,9 +34,9 @@ public class AuthController {
         Authentication auth =
                 authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(
-                                userCredentialAuthRequest.getName(), userCredentialAuthRequest.getPassword()));
+                                userCredentialAuthRequest.getLogin(), userCredentialAuthRequest.getPassword()));
         if (auth.isAuthenticated()) {
-            return authService.generateToken(userCredentialAuthRequest.getName());
+            return authService.generateToken(userCredentialAuthRequest.getLogin());
         } else {
             throw new RuntimeException("Invalid access");
         }
