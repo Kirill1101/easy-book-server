@@ -1,6 +1,6 @@
 FROM eclipse-temurin:17.0.4.1_1-jre as builder
 WORKDIR /extracted
-ADD target/api-gateway.jar backend.jar
+ADD target/auth-service.jar backend.jar
 RUN java -Djarmode=layertools -jar backend.jar extract
 
 FROM eclipse-temurin:17.0.4.1_1-jre
@@ -10,4 +10,4 @@ COPY --from=builder /extracted/spring-boot-loader/ ./
 COPY --from=builder /extracted/snapshot-dependencies/ ./
 COPY --from=builder /extracted/application/ ./
 EXPOSE 8081
-ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
+ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
