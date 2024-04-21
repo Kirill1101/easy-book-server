@@ -1,0 +1,62 @@
+version: "3"
+
+services:
+  discovery-server:
+    image: kirill1101/discovery-server:latest
+    container_name: discovery-server-app
+    ports:
+      - "8761:8761"
+
+  api-gateway:
+    image: kirill1101/api-gateway:latest
+    container_name: api-gateway-app
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8080:8080"
+    depends_on:
+      - discovery-server
+
+  auth-service:
+    image: kirill1101/auth-service:latest
+    container_name: auth-service-app
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8081:8081"
+    depends_on:
+      - discovery-server
+      - api-gateway
+      - postgres-users
+
+  scheduling-service:
+    image: kirill1101/scheduling-service:latest
+    container_name: scheduling-service-app
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8082:8082"
+    depends_on:
+      - discovery-server
+      - api-gateway
+      - postgres-scheduling
+
+  postgres-users:
+    image: 'postgres:latest'
+    container_name: postgres-users
+    environment:
+      - POSTGRES_DB=users
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+
+  postgres-scheduling:
+    image: 'postgres:latest'
+    container_name: postgres-scheduling
+    environment:
+      - POSTGRES_DB=scheduling
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5433:5432"
