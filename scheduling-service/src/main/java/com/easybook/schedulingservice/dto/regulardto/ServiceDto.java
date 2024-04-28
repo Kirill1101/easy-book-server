@@ -1,13 +1,13 @@
 package com.easybook.schedulingservice.dto.regulardto;
 
 import jakarta.validation.constraints.NotNull;
-import java.time.Instant;
+import java.util.UUID;
 import lombok.Data;
 
 @Data
 public class ServiceDto {
   @NotNull
-  private Long id;
+  private UUID id;
 
   private String userCreatorLogin;
 

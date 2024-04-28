@@ -4,15 +4,16 @@ import com.easybook.schedulingservice.entity.ScheduleDate;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface ScheduleDateService {
   ScheduleDate createScheduleDate(ScheduleDate scheduleDate);
 
-  Optional<ScheduleDate> getScheduleDateById(Long scheduleDateId);
+  Optional<ScheduleDate> getScheduleDateById(UUID scheduleDateId);
 
-  List<ScheduleDate> getAllScheduleDatesByScheduleId(Long scheduleId);
+  List<ScheduleDate> getAllScheduleDatesByScheduleId(UUID scheduleId);
 
   ScheduleDate updateScheduleDate(ScheduleDate scheduleDate);
 
-  void deleteScheduleDateById(Long scheduleDateId);
+  void deleteScheduleDateById(UUID scheduleDateId);
 }

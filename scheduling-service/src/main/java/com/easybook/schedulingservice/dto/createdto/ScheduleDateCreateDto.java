@@ -3,6 +3,7 @@ package com.easybook.schedulingservice.dto.createdto;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 import lombok.Data;
 
 @Data
@@ -14,5 +15,5 @@ public class ScheduleDateCreateDto {
   private List<SlotCreateDto> slots;
 
   @NotNull
-  private Long scheduleId;
+  private UUID scheduleId;
 }

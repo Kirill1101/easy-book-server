@@ -11,6 +11,7 @@ import com.easybook.schedulingservice.service.service.ServiceService;
 import com.easybook.schedulingservice.util.JwtUtil;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -58,7 +59,7 @@ public class ServiceController {
 
   @GetMapping("/{id}")
   public ServiceDto getServiceById(
-      @PathVariable Long id,
+      @PathVariable UUID id,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     jwtUtil.validateTokenAndExtractData(token);
 
@@ -90,7 +91,7 @@ public class ServiceController {
 
   @DeleteMapping("/{id}")
   public void deleteServiceById(
-      @PathVariable Long id,
+      @PathVariable UUID id,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     Map<String, Object> userInfo = jwtUtil.validateTokenAndExtractData(token);
     String userLogin = String.valueOf(userInfo.get("login").toString());

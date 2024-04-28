@@ -1,6 +1,7 @@
 package com.easybook.authservice.entity;
 
 import jakarta.persistence.*;
+import java.util.UUID;
 import lombok.Data;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public class UserCredential {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  private UUID id;
 
   @Column(name = "login", nullable = false, unique = true)
   private String login;

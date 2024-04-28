@@ -5,6 +5,7 @@ import com.easybook.schedulingservice.entity.Service;
 import com.easybook.schedulingservice.repository.ServiceRepository;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 
 @org.springframework.stereotype.Service
@@ -19,12 +20,12 @@ public class ServiceServiceImpl implements ServiceService{
   }
 
   @Override
-  public Optional<Service> getServiceById(Long id) {
+  public Optional<Service> getServiceById(UUID id) {
     return serviceRepository.findById(id);
   }
 
   @Override
-  public List<Service> getAllServicesByScheduleId(Long scheduleId) {
+  public List<Service> getAllServicesByScheduleId(UUID scheduleId) {
     return serviceRepository.findServicesByScheduleId(scheduleId);
   }
 
@@ -42,7 +43,7 @@ public class ServiceServiceImpl implements ServiceService{
   }
 
   @Override
-  public void deleteServiceById(Long id) {
+  public void deleteServiceById(UUID id) {
     serviceRepository.deleteById(id);
   }
 }

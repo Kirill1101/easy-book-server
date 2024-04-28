@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.UUID;
 import lombok.Data;
 
 @Data
@@ -19,5 +20,5 @@ public class SlotCreateDto {
   @Schema(type = "String", pattern = "12:00:00")
   private LocalTime endTime;
 
-  private Long scheduleDateId;
+  private UUID scheduleDateId;
 }

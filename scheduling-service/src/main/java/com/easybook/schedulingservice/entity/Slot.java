@@ -11,6 +11,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.UUID;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,8 +21,8 @@ import lombok.Setter;
 @Entity
 public class Slot {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
   @Temporal(TemporalType.TIME)
   private LocalTime startTime;
@@ -29,7 +30,7 @@ public class Slot {
   @Temporal(TemporalType.TIME)
   private LocalTime endTime;
 
-  private Long appointmentId;
+  private UUID appointmentId;
 
   @ManyToOne
   private ScheduleDate scheduleDate;

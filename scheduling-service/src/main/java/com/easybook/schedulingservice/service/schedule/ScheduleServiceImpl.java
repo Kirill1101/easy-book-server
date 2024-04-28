@@ -8,6 +8,7 @@ import com.easybook.schedulingservice.service.schedule_date.ScheduleDateService;
 import com.easybook.schedulingservice.service.service.ServiceService;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,12 +31,12 @@ public class ScheduleServiceImpl implements ScheduleService {
   }
 
   @Override
-  public Optional<Schedule> getScheduleById(Long id) {
+  public Optional<Schedule> getScheduleById(UUID id) {
     return scheduleRepository.findById(id);
   }
 
   @Override
-  public List<Schedule> getSchedulesByUserId(Long userId) {
+  public List<Schedule> getSchedulesByUserId(UUID userId) {
     return scheduleRepository.getSchedulesByUserCreatorId(userId);
   }
 
@@ -66,12 +67,12 @@ public class ScheduleServiceImpl implements ScheduleService {
   }
 
   @Override
-  public void deleteScheduleById(Long id) {
+  public void deleteScheduleById(UUID id) {
     scheduleRepository.deleteById(id);
   }
 
   @Override
-  public boolean scheduleIsExists(Long id) {
+  public boolean scheduleIsExists(UUID id) {
     return scheduleRepository.existsById(id);
   }
 }

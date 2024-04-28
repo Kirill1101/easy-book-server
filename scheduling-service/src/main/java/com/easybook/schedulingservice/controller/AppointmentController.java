@@ -3,6 +3,7 @@ package com.easybook.schedulingservice.controller;
 import com.easybook.schedulingservice.dto.createdto.AppointmentCreateDto;
 import com.easybook.schedulingservice.dto.createdto.ServiceCreateDto;
 import com.easybook.schedulingservice.dto.regulardto.AppointmentDto;
+import com.easybook.schedulingservice.dto.regulardto.OrganizationDto;
 import com.easybook.schedulingservice.dto.regulardto.ServiceDto;
 import com.easybook.schedulingservice.entity.Appointment;
 import com.easybook.schedulingservice.entity.Schedule;
@@ -12,8 +13,10 @@ import com.easybook.schedulingservice.repository.AppointmentRepository;
 import com.easybook.schedulingservice.service.appointment.AppointmentService;
 import com.easybook.schedulingservice.service.schedule.ScheduleService;
 import com.easybook.schedulingservice.util.JwtUtil;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -32,6 +35,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/appointment")
 @RequiredArgsConstructor
 public class AppointmentController {
+
   private final AppointmentService appointmentService;
 
   private final ScheduleService scheduleService;
@@ -58,7 +62,8 @@ public class AppointmentController {
           "Расписания с таким id не существует");
     }
 
-    Appointment appointment = schedulingMapper.appointmentCreateDtoToAppointment(appointmentCreateDto);
+    Appointment appointment = schedulingMapper.appointmentCreateDtoToAppointment(
+        appointmentCreateDto);
     appointment.setUserLogin(userLogin);
     appointment.setSchedule(schedule.get());
     appointment = appointmentService.createAppointment(appointment);
@@ -66,9 +71,20 @@ public class AppointmentController {
     return schedulingMapper.appointmentToAppointmentDto(appointment);
   }
 
+  @GetMapping
+  public List<AppointmentDto> getOrganizationByUser(
+      @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
+    Map<String, Object> userInfo = jwtUtil.validateTokenAndExtractData(token);
+    String userLogin = String.valueOf(userInfo.get("login").toString());
+
+    return appointmentService.getAllAppointmentsByUserLogin(userLogin).stream()
+        .map(schedulingMapper::appointmentToAppointmentDto)
+        .toList();
+  }
+
   @GetMapping("/{id}")
   public AppointmentDto getAppointmentById(
-      @PathVariable Long id,
+      @PathVariable UUID id,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     jwtUtil.validateTokenAndExtractData(token);
 
@@ -101,7 +117,7 @@ public class AppointmentController {
 
   @DeleteMapping("/{id}")
   public void deleteAppointmentById(
-      @PathVariable Long id,
+      @PathVariable UUID id,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     Map<String, Object> userInfo = jwtUtil.validateTokenAndExtractData(token);
     String userLogin = String.valueOf(userInfo.get("login").toString());

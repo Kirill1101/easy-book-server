@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 import lombok.Data;
 
 @Data
@@ -21,5 +22,5 @@ public class AppointmentCreateDto {
 
   private Long duration;
 
-  private Long scheduleId;
+  private UUID scheduleId;
 }

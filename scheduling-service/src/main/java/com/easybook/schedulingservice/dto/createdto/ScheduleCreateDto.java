@@ -4,6 +4,7 @@ import com.easybook.schedulingservice.dto.regulardto.AppointmentDto;
 import com.easybook.schedulingservice.entity.Appointment;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
+import java.util.UUID;
 import lombok.Data;
 
 @Data
@@ -17,5 +18,5 @@ public class ScheduleCreateDto {
 
   private List<ServiceCreateDto> services;
 
-  private Long organizationsId;
+  private UUID organizationsId;
 }

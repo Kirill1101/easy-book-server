@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,15 +18,15 @@ import lombok.Setter;
 @Entity
 public class Organization {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
   @NotNull
   private String title;
 
   @NotNull
   @Column(updatable=false)
-  private Long userCreatorId;
+  private UUID userCreatorId;
 
   @NotNull
   private String userCreatorLogin;

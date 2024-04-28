@@ -6,6 +6,7 @@ import com.easybook.schedulingservice.service.slot.SlotService;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -27,12 +28,12 @@ public class ScheduleDateServiceImpl implements ScheduleDateService{
   }
 
   @Override
-  public Optional<ScheduleDate> getScheduleDateById(Long scheduleDateId) {
+  public Optional<ScheduleDate> getScheduleDateById(UUID scheduleDateId) {
     return scheduleDateRepository.findById(scheduleDateId);
   }
 
   @Override
-  public List<ScheduleDate> getAllScheduleDatesByScheduleId(Long scheduleId) {
+  public List<ScheduleDate> getAllScheduleDatesByScheduleId(UUID scheduleId) {
     return scheduleDateRepository.findScheduleDatesBySchedule_Id(scheduleId);
   }
 
@@ -51,7 +52,7 @@ public class ScheduleDateServiceImpl implements ScheduleDateService{
   }
 
   @Override
-  public void deleteScheduleDateById(Long scheduleDateId) {
+  public void deleteScheduleDateById(UUID scheduleDateId) {
     scheduleDateRepository.deleteById(scheduleDateId);
   }
 }

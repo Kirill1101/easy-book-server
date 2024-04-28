@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -33,22 +34,22 @@ public class SlotServiceImpl implements SlotService {
   }
 
   @Override
-  public Optional<Slot> getSlotById(Long slotId) {
+  public Optional<Slot> getSlotById(UUID slotId) {
     return slotRepository.findById(slotId);
   }
 
   @Override
-  public List<Slot> getAllSlotsByScheduleDateId(Long scheduleDateId) {
+  public List<Slot> getAllSlotsByScheduleDateId(UUID scheduleDateId) {
     return slotRepository.findSlotsByScheduleDate_Id(scheduleDateId);
   }
 
   @Override
-  public List<Slot> getFreeSlots(Long scheduleDateId) {
+  public List<Slot> getFreeSlots(UUID scheduleDateId) {
     return slotRepository.findSlotsByScheduleDate_IdAndAppointmentIdIsNull(scheduleDateId);
   }
 
   @Override
-  public List<Slot> getOccupiedSlots(Long scheduleDateId) {
+  public List<Slot> getOccupiedSlots(UUID scheduleDateId) {
     return slotRepository.findSlotsByScheduleDate_IdAndAppointmentIdIsNotNull(scheduleDateId);
   }
 
@@ -72,13 +73,13 @@ public class SlotServiceImpl implements SlotService {
   }
 
   @Override
-  public void deleteSlotById(Long slotId) {
+  public void deleteSlotById(UUID slotId) {
     slotRepository.deleteById(slotId);
   }
 
   @Override
   public List<Slot> setSlotsAsOccupiedByAppointment(Appointment appointment) {
-    Long scheduleDateId = scheduleDateRepository.findScheduleDateBySchedule_IdAndDate(
+    UUID scheduleDateId = scheduleDateRepository.findScheduleDateBySchedule_IdAndDate(
         appointment.getSchedule().getId(), appointment.getDate()).orElseThrow(() ->
         new ResponseStatusException(HttpStatus.NOT_FOUND, "Такой даты нет в расписании")).getId();
     List<Slot> slots = slotRepository.findSlotsThatOccurWithinSpecifiedTimeInterval(
@@ -94,7 +95,7 @@ public class SlotServiceImpl implements SlotService {
   }
 
   @Override
-  public List<Slot> getAvailableSlotsForSpecifiedDuration(Long scheduleDateId, Duration duration) {
+  public List<Slot> getAvailableSlotsForSpecifiedDuration(UUID scheduleDateId, Duration duration) {
     List<Slot> freeSlots = getFreeSlots(scheduleDateId);
 
     List<Slot> slotsAvailableForAppointment = new ArrayList<>();
@@ -121,7 +122,7 @@ public class SlotServiceImpl implements SlotService {
   }
 
   @Override
-  public List<Slot> getSlotsByAppointmentId(Long appointmentId) {
+  public List<Slot> getSlotsByAppointmentId(UUID appointmentId) {
     return slotRepository.getSlotsByAppointmentId(appointmentId);
   }
 }

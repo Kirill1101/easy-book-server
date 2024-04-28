@@ -7,26 +7,27 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface SlotService {
 
   Slot createSlot(Slot slot);
 
-  Optional<Slot> getSlotById(Long slotId);
+  Optional<Slot> getSlotById(UUID slotId);
 
-  List<Slot> getAllSlotsByScheduleDateId(Long scheduleDateId);
+  List<Slot> getAllSlotsByScheduleDateId(UUID scheduleDateId);
 
-  List<Slot> getOccupiedSlots(Long scheduleId);
+  List<Slot> getOccupiedSlots(UUID scheduleId);
 
-  List<Slot> getFreeSlots(Long scheduleId);
+  List<Slot> getFreeSlots(UUID scheduleId);
 
-  List<Slot> getAvailableSlotsForSpecifiedDuration(Long scheduleId, Duration duration);
+  List<Slot> getAvailableSlotsForSpecifiedDuration(UUID scheduleId, Duration duration);
 
-  List<Slot> getSlotsByAppointmentId(Long appointmentId);
+  List<Slot> getSlotsByAppointmentId(UUID appointmentId);
 
   Slot updateSlot(Slot slot);
 
-  void deleteSlotById(Long slotId);
+  void deleteSlotById(UUID slotId);
 
   List<Slot> setSlotsAsOccupiedByAppointment(Appointment appointment);
 }

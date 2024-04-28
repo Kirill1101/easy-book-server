@@ -10,6 +10,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
+import java.util.UUID;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,8 +20,8 @@ import lombok.Setter;
 @Entity
 public class Service {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
   @NotNull
   private String userCreatorLogin;

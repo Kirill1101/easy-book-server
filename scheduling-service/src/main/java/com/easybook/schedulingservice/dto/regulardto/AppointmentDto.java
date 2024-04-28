@@ -4,12 +4,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 import lombok.Data;
 
 @Data
 public class AppointmentDto {
   @NotNull
-  private Long id;
+  private UUID id;
 
   private String userLogin;
 

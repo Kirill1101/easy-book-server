@@ -5,6 +5,7 @@ import com.easybook.schedulingservice.repository.OrganizationRepository;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -29,17 +30,17 @@ public class OrganizationServiceImpl implements OrganizationService {
   }
 
   @Override
-  public Optional<Organization> getOrganizationById(Long id) {
+  public Optional<Organization> getOrganizationById(UUID id) {
     return organizationRepository.findById(id);
   }
 
   @Override
-  public List<Organization> getOrganizationsByUserId(Long userId) {
+  public List<Organization> getOrganizationsByUserId(UUID userId) {
     return organizationRepository.findOrganizationsByUserCreatorId(userId);
   }
 
   @Override
-  public void deleteOrganizationById(Long id) {
+  public void deleteOrganizationById(UUID id) {
     if (!organizationRepository.existsById(id)) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND,
           ORGANIZATION_NOT_FOUND_MESSAGE);
@@ -48,7 +49,7 @@ public class OrganizationServiceImpl implements OrganizationService {
   }
 
   @Override
-  public boolean organizationIsExists(Long id) {
+  public boolean organizationIsExists(UUID id) {
     return organizationRepository.existsById(id);
   }
 }

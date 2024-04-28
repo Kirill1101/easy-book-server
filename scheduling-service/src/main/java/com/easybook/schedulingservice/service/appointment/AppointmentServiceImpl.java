@@ -7,6 +7,7 @@ import com.easybook.schedulingservice.service.slot.SlotService;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,12 +30,12 @@ public class AppointmentServiceImpl implements AppointmentService {
   }
 
   @Override
-  public Optional<Appointment> getAppointmentById(Long id) {
+  public Optional<Appointment> getAppointmentById(UUID id) {
     return appointmentRepository.findById(id);
   }
 
   @Override
-  public List<Appointment> getAllAppointmentsByScheduleId(Long scheduleId) {
+  public List<Appointment> getAllAppointmentsByScheduleId(UUID scheduleId) {
     return appointmentRepository.findAppointmentBySchedule_Id(scheduleId);
   }
 
@@ -70,7 +71,7 @@ public class AppointmentServiceImpl implements AppointmentService {
   }
 
   @Override
-  public void deleteAppointmentById(Long id) {
+  public void deleteAppointmentById(UUID id) {
     slotRepository.getSlotsByAppointmentId(id).forEach(slot -> slot.setAppointmentId(null));
     appointmentRepository.deleteById(id);
   }

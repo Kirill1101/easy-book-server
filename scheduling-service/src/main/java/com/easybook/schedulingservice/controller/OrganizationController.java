@@ -2,14 +2,17 @@ package com.easybook.schedulingservice.controller;
 
 import com.easybook.schedulingservice.dto.createdto.OrganizationCreateDto;
 import com.easybook.schedulingservice.dto.regulardto.OrganizationDto;
+import com.easybook.schedulingservice.dto.regulardto.ScheduleDto;
 import com.easybook.schedulingservice.entity.Organization;
 import com.easybook.schedulingservice.entity.Schedule;
 import com.easybook.schedulingservice.mapper.SchedulingMapper;
 import com.easybook.schedulingservice.service.organization.OrganizationService;
 import com.easybook.schedulingservice.service.schedule.ScheduleService;
 import com.easybook.schedulingservice.util.JwtUtil;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -36,7 +39,7 @@ public class OrganizationController {
       @RequestBody OrganizationCreateDto organizationCreateDto,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     Map<String, Object> userInfo = jwtUtil.validateTokenAndExtractData(token);
-    Long userId = Long.valueOf(userInfo.get("id").toString());
+    UUID userId = UUID.fromString(userInfo.get("id").toString());
     String userLogin = userInfo.get("login").toString();
 
     Organization organization =
@@ -48,9 +51,20 @@ public class OrganizationController {
         organizationService.createOrganization(organization));
   }
 
+  @GetMapping
+  public List<OrganizationDto> getOrganizationByUser(
+      @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
+    Map<String, Object> userInfo = jwtUtil.validateTokenAndExtractData(token);
+    UUID userId = UUID.fromString(userInfo.get("id").toString());
+
+    return organizationService.getOrganizationsByUserId(userId).stream()
+        .map(schedulingMapper::organizationToOrganizationDto)
+        .toList();
+  }
+
   @GetMapping("/{id}")
   public OrganizationDto getOrganizationById(
-      @PathVariable Long id,
+      @PathVariable UUID id,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     jwtUtil.validateTokenAndExtractData(token);
 
@@ -96,7 +110,7 @@ public class OrganizationController {
 
   @DeleteMapping("/{id}")
   public void deleteOrganization(
-      @PathVariable Long id,
+      @PathVariable UUID id,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     Map<String, Object> userInfo = jwtUtil.validateTokenAndExtractData(token);
     String userLogin = String.valueOf(userInfo.get("login").toString());

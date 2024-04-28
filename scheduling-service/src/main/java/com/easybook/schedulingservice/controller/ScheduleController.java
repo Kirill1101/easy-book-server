@@ -1,16 +1,11 @@
 package com.easybook.schedulingservice.controller;
 
-import com.easybook.schedulingservice.dto.createdto.AppointmentCreateDto;
 import com.easybook.schedulingservice.dto.createdto.ScheduleCreateDto;
-import com.easybook.schedulingservice.dto.regulardto.AppointmentDto;
 import com.easybook.schedulingservice.dto.regulardto.ScheduleDateDto;
 import com.easybook.schedulingservice.dto.regulardto.ScheduleDto;
 import com.easybook.schedulingservice.dto.regulardto.ServiceDto;
-import com.easybook.schedulingservice.entity.Appointment;
-import com.easybook.schedulingservice.entity.Organization;
 import com.easybook.schedulingservice.entity.Schedule;
 import com.easybook.schedulingservice.entity.ScheduleDate;
-import com.easybook.schedulingservice.entity.Slot;
 import com.easybook.schedulingservice.mapper.SchedulingMapper;
 import com.easybook.schedulingservice.service.organization.OrganizationService;
 import com.easybook.schedulingservice.service.schedule.ScheduleService;
@@ -22,6 +17,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -55,7 +51,7 @@ public class ScheduleController {
       @RequestBody ScheduleCreateDto scheduleCreateDto,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     Map<String, Object> userInfo = jwtUtil.validateTokenAndExtractData(token);
-    Long userId = Long.valueOf(userInfo.get("id").toString());
+    UUID userId = UUID.fromString(userInfo.get("id").toString());
     String userLogin = userInfo.get("login").toString();
 
     if (!organizationService.organizationIsExists(scheduleCreateDto.getOrganizationsId())) {
@@ -83,9 +79,20 @@ public class ScheduleController {
     return schedulingMapper.scheduleToScheduleDto(schedule);
   }
 
+  @GetMapping
+  public List<ScheduleDto> getScheduleByUser(
+      @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
+    Map<String, Object> userInfo = jwtUtil.validateTokenAndExtractData(token);
+    UUID userId = UUID.fromString(userInfo.get("id").toString());
+
+    return scheduleService.getSchedulesByUserId(userId).stream()
+        .map(schedulingMapper::scheduleToScheduleDto)
+        .toList();
+  }
+
   @GetMapping("/{id}")
   public ScheduleDto getScheduleById(
-      @PathVariable Long id,
+      @PathVariable UUID id,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     jwtUtil.validateTokenAndExtractData(token);
 
@@ -120,7 +127,7 @@ public class ScheduleController {
 
   @DeleteMapping("/{id}")
   public void deleteOrganization(
-      @PathVariable Long id,
+      @PathVariable UUID id,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     Map<String, Object> userInfo = jwtUtil.validateTokenAndExtractData(token);
     String userLogin = String.valueOf(userInfo.get("login").toString());
@@ -140,7 +147,7 @@ public class ScheduleController {
 
   @GetMapping("/{scheduleId}/services")
   public List<ServiceDto> getAllServicesByScheduleId(
-      @PathVariable Long scheduleId,
+      @PathVariable UUID scheduleId,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     jwtUtil.validateTokenAndExtractData(token);
 
@@ -151,7 +158,7 @@ public class ScheduleController {
 
   @GetMapping("/{scheduleId}/slots")
   public List<ScheduleDateDto> getAllSlotsByScheduleId(
-      @PathVariable Long scheduleId,
+      @PathVariable UUID scheduleId,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     jwtUtil.validateTokenAndExtractData(token);
 
@@ -168,7 +175,7 @@ public class ScheduleController {
 
   @GetMapping("/{scheduleId}/free-slots")
   public List<ScheduleDateDto> getFreeSlotsByScheduleId(
-      @PathVariable Long scheduleId,
+      @PathVariable UUID scheduleId,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     jwtUtil.validateTokenAndExtractData(token);
 
@@ -188,7 +195,7 @@ public class ScheduleController {
 
   @GetMapping("/{scheduleId}/available-slots")
   public List<ScheduleDateDto> getAvailableSlotsByScheduleId(
-      @PathVariable Long scheduleId,
+      @PathVariable UUID scheduleId,
       @RequestParam(value = "durationInSeconds") Long durationInSeconds,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     jwtUtil.validateTokenAndExtractData(token);

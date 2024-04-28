@@ -18,6 +18,7 @@ import com.easybook.schedulingservice.service.slot.SlotService;
 import com.easybook.schedulingservice.util.JwtUtil;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -72,7 +73,7 @@ public class SlotController {
 
   @GetMapping("/{id}")
   public SlotDto getSlotById(
-      @PathVariable Long id,
+      @PathVariable UUID id,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     jwtUtil.validateTokenAndExtractData(token);
 
@@ -104,7 +105,7 @@ public class SlotController {
 
   @DeleteMapping("/{id}")
   public void deleteSlotById(
-      @PathVariable Long id,
+      @PathVariable UUID id,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     Map<String, Object> userInfo = jwtUtil.validateTokenAndExtractData(token);
     String userLogin = String.valueOf(userInfo.get("login").toString());
