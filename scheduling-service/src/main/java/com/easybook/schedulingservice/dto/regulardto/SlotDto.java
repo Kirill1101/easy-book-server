@@ -17,5 +17,5 @@ public class SlotDto {
   @Schema(type = "String", pattern = "12:00:00")
   private LocalTime endTime;
 
-  private Long appointmentId;
+  private UUID appointmentId;
 }
