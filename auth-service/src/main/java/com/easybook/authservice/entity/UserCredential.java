@@ -10,9 +10,8 @@ import java.util.List;
 @Data
 @Table(name = "user_credential")
 public class UserCredential {
-
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
   @Column(name = "login", nullable = false, unique = true)

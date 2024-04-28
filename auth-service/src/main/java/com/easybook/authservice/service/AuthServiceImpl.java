@@ -3,7 +3,6 @@ package com.easybook.authservice.service;
 import com.easybook.authservice.entity.UserCredential;
 import com.easybook.authservice.repository.UserCredentialsRepository;
 import com.easybook.authservice.util.JwtUtil;
-//import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
