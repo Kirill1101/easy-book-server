@@ -6,6 +6,7 @@ services:
     container_name: discovery-server-app
     ports:
       - "8761:8761"
+    restart: always
 
   api-gateway:
     image: kirill1101/api-gateway:latest
@@ -16,6 +17,7 @@ services:
       - "8080:8080"
     depends_on:
       - discovery-server
+    restart: always
 
   auth-service:
     image: kirill1101/auth-service:latest
@@ -28,6 +30,7 @@ services:
       - discovery-server
       - api-gateway
       - postgres-users
+    restart: always
 
   scheduling-service:
     image: kirill1101/scheduling-service:latest
@@ -40,6 +43,7 @@ services:
       - discovery-server
       - api-gateway
       - postgres-scheduling
+    restart: always
 
   postgres-users:
     image: 'postgres:latest'
@@ -50,6 +54,7 @@ services:
       - POSTGRES_PASSWORD=password
     ports:
       - "5432:5432"
+    restart: always
 
   postgres-scheduling:
     image: 'postgres:latest'
@@ -60,3 +65,4 @@ services:
       - POSTGRES_PASSWORD=password
     ports:
       - "5433:5432"
+    restart: always
