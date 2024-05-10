@@ -54,9 +54,11 @@ public class ScheduleController {
     UUID userId = UUID.fromString(userInfo.get("id").toString());
     String userLogin = userInfo.get("login").toString();
 
-    if (!organizationService.organizationIsExists(scheduleCreateDto.getOrganizationsId())) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-          "Организации с id = " + scheduleCreateDto.getOrganizationsId() + " не существует");
+    if (scheduleCreateDto.getOrganizationId() != null) {
+      if (!organizationService.organizationIsExists(scheduleCreateDto.getOrganizationId())) {
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+            "Организации с id = " + scheduleCreateDto.getOrganizationId() + " не существует");
+      }
     }
 
     Schedule schedule =
@@ -65,16 +67,20 @@ public class ScheduleController {
     schedule.setUserCreatorLogin(userLogin);
     Schedule savedSchedule = scheduleService.createSchedule(schedule);
 
-    schedule.getServices().forEach(service -> {
-      service.setUserCreatorLogin(userLogin);
-      service.setSchedule(savedSchedule);
-      serviceService.createService(service);
-    });
+    if (schedule.getServices() != null) {
+      schedule.getServices().forEach(service -> {
+        service.setUserCreatorLogin(userLogin);
+        service.setSchedule(savedSchedule);
+        serviceService.createService(service);
+      });
+    }
 
-    schedule.getAvailableDates().forEach(date -> {
-      date.setSchedule(savedSchedule);
-      scheduleDateService.createScheduleDate(date);
-    });
+    if (schedule.getAvailableDates() != null) {
+      schedule.getAvailableDates().forEach(date -> {
+        date.setSchedule(savedSchedule);
+        scheduleDateService.createScheduleDate(date);
+      });
+    }
 
     return schedulingMapper.scheduleToScheduleDto(schedule);
   }

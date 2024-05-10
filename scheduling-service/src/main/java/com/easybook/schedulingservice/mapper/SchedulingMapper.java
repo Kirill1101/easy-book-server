@@ -19,6 +19,7 @@ import com.easybook.schedulingservice.entity.ScheduleDate;
 import com.easybook.schedulingservice.entity.Service;
 import com.easybook.schedulingservice.entity.Slot;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface SchedulingMapper {
@@ -30,6 +31,7 @@ public interface SchedulingMapper {
 
   Appointment appointmentCreateDtoToAppointment(AppointmentCreateDto appointmentCreateDto);
 
+  @Mapping(target = "scheduleTitle", expression = "java(appointment.getSchedule().getTitle())")
   AppointmentDto appointmentToAppointmentDto(Appointment appointment);
 
   Appointment appointmentDtoToAppointment(AppointmentDto appointment);

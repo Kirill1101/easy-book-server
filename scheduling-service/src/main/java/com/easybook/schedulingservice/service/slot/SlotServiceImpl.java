@@ -11,6 +11,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -97,6 +98,7 @@ public class SlotServiceImpl implements SlotService {
   @Override
   public List<Slot> getAvailableSlotsForSpecifiedDuration(UUID scheduleDateId, Duration duration) {
     List<Slot> freeSlots = getFreeSlots(scheduleDateId);
+    freeSlots.sort(Comparator.comparing(Slot::getStartTime));
 
     List<Slot> slotsAvailableForAppointment = new ArrayList<>();
     for (int i = 0; i < freeSlots.size(); i++) {

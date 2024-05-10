@@ -7,7 +7,6 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
@@ -19,12 +18,6 @@ public class AppConfig {
   public RouteLocator routeLocator(RouteLocatorBuilder builder) {
     return builder
         .routes()
-        .route(
-            r ->
-                r.path("/skill-service/v3/api-docs")
-                    .and()
-                    .method(HttpMethod.GET)
-                    .uri("lb://skill-service"))
         .route(
             r ->
                 r.path("/auth-service/v3/api-docs")

@@ -2,6 +2,7 @@ package com.easybook.schedulingservice.dto.regulardto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
@@ -14,6 +15,8 @@ public class AppointmentDto {
 
   private String userLogin;
 
+  private LocalDate date;
+
   @Schema(type = "String", pattern = "12:00:00")
   private LocalTime startTime;
 
@@ -23,4 +26,6 @@ public class AppointmentDto {
   private List<ServiceDto> services;
 
   private Long duration;
+
+  private String scheduleTitle;
 }
