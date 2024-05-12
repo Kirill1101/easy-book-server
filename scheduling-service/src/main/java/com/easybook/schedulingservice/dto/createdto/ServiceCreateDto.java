@@ -1,7 +1,6 @@
 package com.easybook.schedulingservice.dto.createdto;
 
 import jakarta.validation.constraints.NotNull;
-import java.time.Instant;
 import java.util.UUID;
 import lombok.Data;
 
@@ -12,6 +11,8 @@ public class ServiceCreateDto {
 
   @NotNull
   private Long duration;
+
+  private Long price;
 
   private UUID scheduleId;
 }

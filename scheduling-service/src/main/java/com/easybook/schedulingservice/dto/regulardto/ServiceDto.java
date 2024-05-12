@@ -14,4 +14,6 @@ public class ServiceDto {
   private String title;
 
   private Long duration;
+
+  private Long price;
 }

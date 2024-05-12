@@ -2,6 +2,7 @@ package com.easybook.schedulingservice.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,6 +31,9 @@ public class Organization {
 
   @NotNull
   private String userCreatorLogin;
+
+  @ElementCollection
+  private List<String> userAdminLogins;
 
   @OneToMany(mappedBy = "organizationId", cascade = CascadeType.ALL)
   private List<Schedule> schedules;

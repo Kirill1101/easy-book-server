@@ -8,4 +8,6 @@ import lombok.Data;
 public class OrganizationCreateDto {
   @NotNull
   private String title;
+
+  private List<String> userAdminLogins;
 }

@@ -32,6 +32,8 @@ public class Service {
   @NotNull
   private Long duration;
 
+  private Long price;
+
   @ManyToOne
   private Schedule schedule;
 }

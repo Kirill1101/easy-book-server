@@ -15,4 +15,6 @@ public class OrganizationDto {
   private String title;
 
   private List<ScheduleDto> schedules;
+
+  private List<String> userAdminLogins;
 }
