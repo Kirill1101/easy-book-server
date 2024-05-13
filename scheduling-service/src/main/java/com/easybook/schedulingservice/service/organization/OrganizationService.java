@@ -12,7 +12,7 @@ public interface OrganizationService {
 
   Optional<Organization> getOrganizationById(UUID id);
 
-  List<Organization> getOrganizationsByUserId(UUID userId);
+  List<Organization> getOrganizationsByUserIdAndLogin(UUID userId, String userLogin);
 
   void deleteOrganizationById(UUID id);
 

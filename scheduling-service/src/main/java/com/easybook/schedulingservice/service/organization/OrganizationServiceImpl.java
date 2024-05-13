@@ -35,8 +35,9 @@ public class OrganizationServiceImpl implements OrganizationService {
   }
 
   @Override
-  public List<Organization> getOrganizationsByUserId(UUID userId) {
-    return organizationRepository.findOrganizationsByUserCreatorId(userId);
+  public List<Organization> getOrganizationsByUserIdAndLogin(UUID userId, String userLogin) {
+    return organizationRepository
+        .findOrganizationsByUserCreatorIdOrUserAdminLoginsContains(userId, userLogin);
   }
 
   @Override

@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
@@ -31,13 +33,13 @@ public class Schedule {
 
   private Long durationOfOneSlot;
 
-  @OneToMany(mappedBy = "schedule", cascade=CascadeType.ALL)
+  @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
   private List<ScheduleDate> availableDates;
 
-  @OneToMany(mappedBy = "schedule", cascade=CascadeType.ALL)
+  @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
   private List<Service> services;
 
-  @OneToMany(mappedBy = "schedule", cascade=CascadeType.ALL)
+  @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
   private List<Appointment> appointments;
 
   private UUID organizationId;

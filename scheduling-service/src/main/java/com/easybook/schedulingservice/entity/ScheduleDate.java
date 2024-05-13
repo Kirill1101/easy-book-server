@@ -6,6 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
 import java.util.List;
@@ -24,7 +26,7 @@ public class ScheduleDate {
 
   private LocalDate date;
 
-  @OneToMany(mappedBy = "scheduleDate", cascade= CascadeType.ALL)
+  @OneToMany(mappedBy = "scheduleDate", cascade = CascadeType.ALL)
   private List<Slot> slots;
 
   @ManyToOne

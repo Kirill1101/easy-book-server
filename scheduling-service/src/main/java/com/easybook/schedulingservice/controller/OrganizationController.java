@@ -56,8 +56,9 @@ public class OrganizationController {
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     Map<String, Object> userInfo = jwtUtil.validateTokenAndExtractData(token);
     UUID userId = UUID.fromString(userInfo.get("id").toString());
+    String userLogin = String.valueOf(userInfo.get("login").toString());
 
-    return organizationService.getOrganizationsByUserId(userId).stream()
+    return organizationService.getOrganizationsByUserIdAndLogin(userId, userLogin).stream()
         .map(schedulingMapper::organizationToOrganizationDto)
         .toList();
   }
