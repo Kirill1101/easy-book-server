@@ -180,33 +180,36 @@ public class ScheduleController {
   }
 
   @GetMapping("/{scheduleId}/free-slots")
-  public ScheduleDto getFreeSlotsByScheduleId(
+  public List<ScheduleDateDto> getFreeSlotsByScheduleId(
       @PathVariable UUID scheduleId,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     jwtUtil.validateTokenAndExtractData(token);
 
-    Schedule schedule = scheduleService.getScheduleById(scheduleId).orElseThrow(() ->
-        new ResponseStatusException(HttpStatus.NOT_FOUND, SCHEDULE_NOT_FOUND_MESSAGE));
+    if (scheduleService.getScheduleById(scheduleId).isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+          SCHEDULE_NOT_FOUND_MESSAGE);
+    }
 
     List<ScheduleDate> scheduleDates = scheduleDateService.getAllScheduleDatesByScheduleId(
         scheduleId);
     scheduleDates.forEach(scheduleDate ->
         scheduleDate.setSlots(slotService.getFreeSlots(scheduleDate.getId())));
-
-    schedule.setAvailableDates(scheduleDates);
-
-    return schedulingMapper.scheduleToScheduleDto(schedule);
+    return scheduleDates.stream()
+        .map(schedulingMapper::scheduleDateToScheduleDateDto)
+        .toList();
   }
 
   @GetMapping("/{scheduleId}/available-slots")
-  public ScheduleDto getAvailableSlotsByScheduleId(
+  public List<ScheduleDateDto> getAvailableSlotsByScheduleId(
       @PathVariable UUID scheduleId,
       @RequestParam(value = "durationInSeconds") Long durationInSeconds,
       @RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
     jwtUtil.validateTokenAndExtractData(token);
 
-    Schedule schedule = scheduleService.getScheduleById(scheduleId).orElseThrow(() ->
-        new ResponseStatusException(HttpStatus.NOT_FOUND, SCHEDULE_NOT_FOUND_MESSAGE));
+    if (scheduleService.getScheduleById(scheduleId).isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+          SCHEDULE_NOT_FOUND_MESSAGE);
+    }
 
     List<ScheduleDate> scheduleDates = scheduleDateService.getAllScheduleDatesByScheduleId(
         scheduleId);
@@ -216,9 +219,8 @@ public class ScheduleController {
                 Duration.ofSeconds(durationInSeconds))
         )
     );
-
-    schedule.setAvailableDates(scheduleDates);
-
-    return schedulingMapper.scheduleToScheduleDto(schedule);
+    return scheduleDates.stream()
+        .map(schedulingMapper::scheduleDateToScheduleDateDto)
+        .toList();
   }
 }
