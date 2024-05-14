@@ -15,7 +15,7 @@ public interface SlotRepository extends JpaRepository<Slot, UUID> {
   List<Slot> findSlotsByScheduleDate_IdAndAppointmentIdIsNull(UUID scheduleDateId);
 
   @Query(value = "SELECT * FROM slot WHERE slot.schedule_date_id = ?1 AND "
-      + "slot.start_time >= ?2 AND slot.end_time < ?3",
+      + "slot.start_time >= ?2 AND slot.start_time < ?3",
       nativeQuery = true)
   List<Slot> findSlotsThatOccurWithinSpecifiedTimeInterval(UUID scheduleDateId,
       LocalTime startTime, LocalTime endTime);
