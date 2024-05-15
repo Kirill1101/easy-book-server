@@ -45,6 +45,8 @@ public class ScheduleServiceImpl implements ScheduleService {
   public Schedule updateSchedule(Schedule schedule) {
     Schedule scheduleFromBase = getScheduleById(schedule.getId()).orElseThrow();
 
+    scheduleFromBase.setTitle(schedule.getTitle());
+
     if (schedule.getServices() != null) {
       schedule.getServices().forEach(service -> service.setSchedule(schedule));
       scheduleFromBase.setServices(schedule.getServices());
