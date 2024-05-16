@@ -1,17 +1,10 @@
 package com.easybook.schedulingservice.controller;
 
-import com.easybook.schedulingservice.dto.createdto.ServiceCreateDto;
 import com.easybook.schedulingservice.dto.createdto.SlotCreateDto;
-import com.easybook.schedulingservice.dto.regulardto.AppointmentDto;
-import com.easybook.schedulingservice.dto.regulardto.ServiceDto;
 import com.easybook.schedulingservice.dto.regulardto.SlotDto;
-import com.easybook.schedulingservice.entity.Appointment;
-import com.easybook.schedulingservice.entity.Schedule;
 import com.easybook.schedulingservice.entity.ScheduleDate;
-import com.easybook.schedulingservice.entity.Service;
 import com.easybook.schedulingservice.entity.Slot;
 import com.easybook.schedulingservice.mapper.SchedulingMapper;
-import com.easybook.schedulingservice.service.appointment.AppointmentService;
 import com.easybook.schedulingservice.service.schedule.ScheduleService;
 import com.easybook.schedulingservice.service.schedule_date.ScheduleDateService;
 import com.easybook.schedulingservice.service.slot.SlotService;
